@@ -1,6 +1,6 @@
-var quizContain = document.getElementById("quiz");
+var quizContainer = document.getElementById("quiz");
 
-var questionArr = [
+var questionsArr = [
   {
     question: "What is another name for a cat?",
     answer: "Feline",
@@ -19,7 +19,7 @@ var questionArr = [
   {
     question: "Which type of cat is more physically resiliant than others?",
     answer: "Black",
-    options: ["Black", "Orange", "Veggies", "Fruit"],
+    options: ["Black", "Orange", "Tabby", "Tortise"],
   },
   {
     question: "What is one defining feature of a cat?",
@@ -28,23 +28,23 @@ var questionArr = [
   },
 ];
 
-let currentQuestionI = 0;
-let points = 0;
+let currentQuestionIndex = 0;
+let score = 0;
 let timerInterval;
 let timeLeft = 30;
 
 function displayQuiz() {
-  quizContain.innerHTML = " ";
+  quizContainer.innerHTML = " ";
 
   var previousScore = localStorage.getItem("previous-score");
 
-  if (currentQuestionI === 0 && timeLeft === 30) {
+  if (currentQuestionIndex === 0 && timeLeft === 30) {
     var scoreP = document.createElement("p");
     scoreP.className = "previous-score";
 
     if (previousScore !== null) {
       scoreP.textContent = `Previous Score: ${previousScore}%`;
-      quizContain.appendChild(scoreP);
+      quizContainer.appendChild(scoreP);
     }
 
     var startButton = document.createElement("button");
@@ -52,29 +52,29 @@ function displayQuiz() {
     startButton.textContent = "Start Quiz!";
     startButton.addEventListener("click", startQuiz);
 
-    quizContain.appendChild(startButton);
+    quizContainer.appendChild(startButton);
   } else {
     displayQuestion();
   }
 }
 
 function startQuiz() {
-  currentQuestionI = 0;
-  points = 0;
+  currentQuestionIndex = 0;
+  score = 0;
   timeLeft = 30;
   displayQuestion();
 }
 
 function displayQuestion() {
-  quizContain.innerHTML = "";
+  quizContainer.innerHTML = "";
   clearInterval(timerInterval);
 
-  if (currentQuestionI < questionArr.length) {
-    var currentQuestion = questionArr[currentQuestionI];
+  if (currentQuestionIndex < questionsArr.length) {
+    var currentQuestion = questionsArr[currentQuestionIndex];
 
     var questionParagraph = document.createElement("p");
     questionParagraph.textContent = currentQuestion.question;
-    quizContain.appendChild(questionParagraph);
+    quizContainer.appendChild(questionParagraph);
 
     var optionsDiv = document.createElement("div");
 
@@ -85,12 +85,12 @@ function displayQuestion() {
       optionsDiv.appendChild(optionButton);
     });
 
-    quizContain.appendChild(optionsDiv);
+    quizContainer.appendChild(optionsDiv);
 
     var timerParagraph = document.createElement("p");
     timerParagraph.id = "timer";
     timerParagraph.textContent = timeLeft;
-    quizContain.appendChild(timerParagraph);
+    quizContainer.appendChild(timerParagraph);
 
     startTimer();
   } else {
@@ -123,12 +123,12 @@ function selectAnswer(selectedAnswer) {
 
   if (
     selectedAnswer !== null &&
-    selectedAnswer === questionArr[currentQuestionI].answer
+    selectedAnswer === questionsArr[currentQuestionIndex].answer
   ) {
-    points++;
+    score++;
   }
 
-  currentQuestionI++;
+  currentQuestionIndex++;
 
   displayQuestion();
 }
@@ -136,11 +136,11 @@ function selectAnswer(selectedAnswer) {
 function endQuiz() {
   clearInterval(timerInterval);
 
-  var finalPercentage = Math.round((points / questionArr.length) * 100);
+  var finalPercentage = Math.round((score / questionsArr.length) * 100);
 
   localStorage.setItem("previous-score", finalPercentage);
 
-  currentQuestionI = 0;
+  currentQuestionIndex = 0;
   timeLeft = 30;
 
   displayQuiz();
