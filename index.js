@@ -27,3 +27,33 @@ var questionArr = [
     options: ["Ears", "Tail", "Paws", "Whiskers"],
   },
 ];
+
+let currentQuestionI = 0;
+let points = 0;
+let timerInterval;
+let timeLeft = 30;
+
+function displayQuiz() {
+  quizContain.innerHTML = " ";
+
+  var previousScore = localStorage.getItem("previous-score");
+
+  if (currentQuestionI === 0 && timeLeft === 30) {
+    var scoreP = document.createElement("p");
+    scoreP.className = "previous-score";
+
+    if (previousScore !== null) {
+      scoreP.textContent = "Previous Score: ${previousScore}%";
+      quizContain.appendChild(scoreP);
+    }
+
+    var startButton = document.createElement("button");
+    startButton.id = "start-quiz";
+    startButton.textContent = "Start Quiz!";
+    startButton.addEventListener("click", startQuiz);
+
+    quizContain.appendChild(startButton);
+  } else {
+    displayQuestion();
+  }
+}
