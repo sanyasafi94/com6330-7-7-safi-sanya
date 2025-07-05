@@ -43,7 +43,7 @@ function displayQuiz() {
     scoreP.className = "previous-score";
 
     if (previousScore !== null) {
-      scoreP.textContent = "Previous Score: ${previousScore}%";
+      scoreP.textContent = `Previous Score: ${previousScore}%`;
       quizContain.appendChild(scoreP);
     }
 
@@ -57,3 +57,93 @@ function displayQuiz() {
     displayQuestion();
   }
 }
+
+function startQuiz() {
+  currentQuestionI = 0;
+  points = 0;
+  timeLeft = 30;
+  displayQuestion();
+}
+
+function displayQuestion() {
+  quizContain.innerHTML = "";
+  clearInterval(timerInterval);
+
+  if (currentQuestionI < questionArr.length) {
+    var currentQuestion = questionArr[currentQuestionI];
+
+    var questionParagraph = document.createElement("p");
+    questionParagraph.textContent = currentQuestion.question;
+    quizContain.appendChild(questionParagraph);
+
+    var optionsDiv = document.createElement("div");
+
+    currentQuestion.options.forEach((option) => {
+      var optionButton = document.createElement("button");
+      optionButton.textContent = option;
+      optionButton.addEventListener("click", () => selectAnswer(option));
+      optionsDiv.appendChild(optionButton);
+    });
+
+    quizContain.appendChild(optionsDiv);
+
+    var timerParagraph = document.createElement("p");
+    timerParagraph.id = "timer";
+    timerParagraph.textContent = timeLeft;
+    quizContain.appendChild(timerParagraph);
+
+    startTimer();
+  } else {
+    endQuiz();
+  }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 30;
+
+  var timerDisplay = document.getElementById("timer");
+  if (timerDisplay) {
+    timerDisplay.textContent = timeLeft;
+  }
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    if (timerDisplay) {
+      timerDisplay.textContent = timeLeft;
+    }
+    if (timeLeft <= 0) {
+      selectAnswer(null);
+    }
+  }, 1000);
+}
+
+function selectAnswer(selectedAnswer) {
+  clearInterval(timerInterval);
+
+  if (
+    selectedAnswer !== null &&
+    selectedAnswer === questionArr[currentQuestionI].answer
+  ) {
+    points++;
+  }
+
+  currentQuestionI++;
+
+  displayQuestion();
+}
+
+function endQuiz() {
+  clearInterval(timerInterval);
+
+  var finalPercentage = Math.round((points / questionArr.length) * 100);
+
+  localStorage.setItem("previous-score", finalPercentage);
+
+  currentQuestionI = 0;
+  timeLeft = 30;
+
+  displayQuiz();
+}
+
+document.addEventListener("DOMContentLoaded", displayQuiz);
